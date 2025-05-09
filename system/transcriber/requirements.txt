@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+transformers
+soundfile
+librosa
+python-multipart
+boto3
+python-dotenv
+kafka-python
+pyannote.audio
+ffmpeg-python
+pydub
+psycopg2
