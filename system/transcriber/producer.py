@@ -4,12 +4,9 @@ import logging
 import os
 import json
 
-# Настройка логирования
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 # Загрузка переменных окружения из .env файла
 load_dotenv()
-LLM_INPUT_TOPIC = os.getenv('LLM_INPUT_TOPIC')
+TRANSCRIPTION_OUTPUT_TOPIC = os.getenv('TRANSCRIPTION_OUTPUT_TOPIC')
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 
 producer = KafkaProducer(
@@ -20,4 +17,4 @@ producer = KafkaProducer(
 
 
 def produce(key, value):
-    producer.send(LLM_INPUT_TOPIC, key=key, value=value)
+    producer.send(TRANSCRIPTION_OUTPUT_TOPIC, key=key, value=value)

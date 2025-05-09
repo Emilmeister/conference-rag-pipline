@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import io
 import os
 import uuid
-import wave
 
 load_dotenv()
 

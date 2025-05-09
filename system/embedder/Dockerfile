@@ -1,19 +1,19 @@
-# Use the official Python image from the Docker Hub
+# Используем официальный образ Python в качестве базового
 FROM python:3.9-slim
 
-# Set the working directory
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Copy the requirements file into the container
+# Копируем файлы requirements.txt и main.py в контейнер
 COPY requirements.txt .
 
+# Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 8000
+# Открываем порт, на котором будет работать приложение
+EXPOSE 8500
 
-# Command to run the application
-CMD ["python", "main.py"]
+# Команда для запуска приложения
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8500"]

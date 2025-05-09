@@ -1,6 +1,5 @@
-python-dotenv
-kafka-python
-langchain-core
-langchain-community
-langchain-openai
-python-snappy
+fastapi
+uvicorn
+transformers
+torch
+sentence-transformers

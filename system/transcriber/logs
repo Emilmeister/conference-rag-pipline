@@ -1,0 +1,48 @@
+Device set to use cpu
+2025-05-08 10:30:03,196 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=bootstrap-0 host=81.94.158.131:9092 <connecting> [IPv4 ('81.94.158.131', 9092)]>: connecting to 81.94.158.131:9092 [('81.94.158.131', 9092) IPv4]
+2025-05-08 10:30:03,273 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=bootstrap-0 host=81.94.158.131:9092 <checking_api_versions_recv> [IPv4 ('81.94.158.131', 9092)]>: Broker version identified as 2.5
+2025-05-08 10:30:03,273 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=bootstrap-0 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Connection complete.
+2025-05-08 10:30:03,277 - INFO - Updating subscribed topics to: ('TRANSCRIPTION_INPUT_TOPIC',)
+2025-05-08 10:30:03,302 - INFO - Partitions of the topic: {0}
+2025-05-08 10:30:03,302 - INFO - <BrokerConnection client_id=kafka-python-producer-2, node_id=bootstrap-0 host=81.94.158.131:9092 <connecting> [IPv4 ('81.94.158.131', 9092)]>: connecting to 81.94.158.131:9092 [('81.94.158.131', 9092) IPv4]
+2025-05-08 10:30:03,380 - INFO - <BrokerConnection client_id=kafka-python-producer-2, node_id=bootstrap-0 host=81.94.158.131:9092 <checking_api_versions_recv> [IPv4 ('81.94.158.131', 9092)]>: Broker version identified as 2.5
+2025-05-08 10:30:03,380 - INFO - <BrokerConnection client_id=kafka-python-producer-2, node_id=bootstrap-0 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Connection complete.
+2025-05-08 10:30:03,384 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=1 host=81.94.158.131:9092 <connecting> [IPv4 ('81.94.158.131', 9092)]>: connecting to 81.94.158.131:9092 [('81.94.158.131', 9092) IPv4]
+2025-05-08 10:30:03,485 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=2 host=81.94.158.131:9093 <connecting> [IPv4 ('81.94.158.131', 9093)]>: connecting to 81.94.158.131:9093 [('81.94.158.131', 9093) IPv4]
+2025-05-08 10:30:03,485 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=1 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Connection complete.
+2025-05-08 10:30:03,485 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=bootstrap-0 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Closing connection.
+2025-05-08 10:30:03,586 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=2 host=81.94.158.131:9093 <connected> [IPv4 ('81.94.158.131', 9093)]>: Connection complete.
+2025-05-08 10:30:03,611 - INFO - Coordinator for group/SUMMARIZER is BrokerMetadata(nodeId='coordinator-2', host='81.94.158.131', port=9093, rack=None)
+2025-05-08 10:30:03,611 - INFO - Discovered coordinator coordinator-2 for group SUMMARIZER
+2025-05-08 10:30:03,611 - INFO - Starting new heartbeat thread
+2025-05-08 10:30:03,611 - INFO - Revoking previously assigned partitions set() for group SUMMARIZER
+2025-05-08 10:30:03,611 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=coordinator-2 host=81.94.158.131:9093 <connecting> [IPv4 ('81.94.158.131', 9093)]>: connecting to 81.94.158.131:9093 [('81.94.158.131', 9093) IPv4]
+2025-05-08 10:30:03,712 - INFO - <BrokerConnection client_id=kafka-python-2.2.4, node_id=coordinator-2 host=81.94.158.131:9093 <connected> [IPv4 ('81.94.158.131', 9093)]>: Connection complete.
+2025-05-08 10:30:03,813 - INFO - (Re-)joining group SUMMARIZER
+2025-05-08 10:30:03,839 - INFO - (Re-)joining group SUMMARIZER
+2025-05-08 10:30:03,866 - INFO - Elected group leader -- performing partition assignments using range
+2025-05-08 10:30:03,893 - INFO - Successfully joined group SUMMARIZER with generation 7338
+2025-05-08 10:30:03,893 - INFO - Updated partition assignment: [TopicPartition(topic='TRANSCRIPTION_INPUT_TOPIC', partition=0)]
+2025-05-08 10:30:03,893 - INFO - Setting newly assigned partitions {TopicPartition(topic='TRANSCRIPTION_INPUT_TOPIC', partition=0)} for group SUMMARIZER
+2025-05-08 10:30:03,946 - INFO - Received message: ConsumerRecord(topic='TRANSCRIPTION_INPUT_TOPIC', partition=0, leader_epoch=1, offset=4, timestamp=1746700068381, timestamp_type=0, key=b'', value={'folder': '945aed87-2731-4ddb-939c-33435dfa44b4', 'bucket': 'test'}, headers=[], checksum=None, serialized_key_size=0, serialized_value_size=71, serialized_header_size=-1)
+2025-05-08 10:30:03,946 - INFO - folder, bucket: 945aed87-2731-4ddb-939c-33435dfa44b4, test
+2025-05-08 10:30:05,394 - DEBUG - Registered checkpoint save hook for _speechbrain_save
+2025-05-08 10:30:05,394 - DEBUG - Registered checkpoint load hook for _speechbrain_load
+2025-05-08 10:30:05,394 - DEBUG - Registered checkpoint save hook for save
+2025-05-08 10:30:05,394 - DEBUG - Registered checkpoint load hook for load
+2025-05-08 10:30:05,482 - INFO - Applied quirks (see `speechbrain.utils.quirks`): [disable_jit_profiling, allow_tf32]
+2025-05-08 10:30:05,482 - INFO - Excluded quirks specified by the `SB_DISABLE_QUIRKS` environment (comma-separated list): []
+2025-05-08 10:30:05,483 - DEBUG - Registered checkpoint save hook for _save
+2025-05-08 10:30:05,483 - DEBUG - Registered checkpoint load hook for _recover
+/usr/local/lib/python3.9/site-packages/pytorch_lightning/utilities/migration/migration.py:208: You have multiple `ModelCheckpoint` callback states in this checkpoint, but we found state keys that would end up colliding with each other after an upgrade, which means we can't differentiate which of your checkpoint callbacks needs which states. At least one of your `ModelCheckpoint` callbacks will not be able to reload the state.
+Lightning automatically upgraded your loaded checkpoint from v1.1.3 to v2.5.1.post0. To apply the upgrade to your files permanently, run `python -m pytorch_lightning.utilities.upgrade_checkpoint ../root/.cache/torch/pyannote/models--pyannote--segmentation/snapshots/059e96f964841d40f1a5e755bb7223f76666bba4/pytorch_model.bin`
+/usr/local/lib/python3.9/site-packages/transformers/models/whisper/generation_whisper.py:573: FutureWarning: The input name `inputs` is deprecated. Please make sure to use `input_features` instead.
+  warnings.warn(
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+2025-05-08 10:30:33,014 - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=81.94.158.131:9092 <connecting> [IPv4 ('81.94.158.131', 9092)]>: connecting to 81.94.158.131:9092 [('81.94.158.131', 9092) IPv4]
+2025-05-08 10:30:33,041 - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=1 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Connection complete.
+2025-05-08 10:30:33,041 - INFO - <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=81.94.158.131:9092 <connected> [IPv4 ('81.94.158.131', 9092)]>: Closing connection.
+/usr/local/lib/python3.9/site-packages/pytorch_lightning/utilities/migration/migration.py:208: You have multiple `ModelCheckpoint` callback states in this checkpoint, but we found state keys that would end up colliding with each other after an upgrade, which means we can't differentiate which of your checkpoint callbacks needs which states. At least one of your `ModelCheckpoint` callbacks will not be able to reload the state.
+Lightning automatically upgraded your loaded checkpoint from v1.1.3 to v2.5.1.post0. To apply the upgrade to your files permanently, run `python -m pytorch_lightning.utilities.upgrade_checkpoint ../root/.cache/torch/pyannote/models--pyannote--segmentation/snapshots/059e96f964841d40f1a5e755bb7223f76666bba4/pytorch_model.bin`
+/usr/local/lib/python3.9/site-packages/transformers/models/whisper/generation_whisper.py:573: FutureWarning: The input name `inputs` is deprecated. Please make sure to use `input_features` instead.
+  warnings.warn(

@@ -6,13 +6,14 @@ WORKDIR /app
 
 # Копируем файлы requirements.txt и main.py в контейнер
 COPY requirements.txt .
-COPY main.py .
 
 # Устанавливаем зависимости
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY . .
+
 # Открываем порт, на котором будет работать приложение
-EXPOSE 8500
+EXPOSE 8501
 
 # Команда для запуска приложения
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8500"]
+CMD ["python", "main.py"]
