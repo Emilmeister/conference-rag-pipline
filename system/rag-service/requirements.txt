@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pydantic
+openai-agents
+pydantic~=2.11.1
+arize-phoenix-otel
+openai~=1.70.0
+requests
+openinference-instrumentation-openai
+openinference-instrumentation-openai-agents
+opensearch-py
+pymilvus
+streamlit

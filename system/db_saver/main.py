@@ -84,10 +84,12 @@ for message in consumer:
     room_uuid = message.value.get('room_uuid')
     large_chunks = message.value.get('chunks')
     for large_chunk in large_chunks:
+        parent_id = str(uuid.uuid4())
         for base_chunk in large_chunk['children_chunks']:
             print("base_chunk", base_chunk)
             data = {
                 'id': str(uuid.uuid4()),
+                'parent_id': parent_id,
                 'vector': get_embedding(base_chunk),
                 "room_uuid": room_uuid,
                 "base_chunk": base_chunk,
