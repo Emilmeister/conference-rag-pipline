@@ -1,4 +1,5 @@
 services:
+  #phoenix
   phoenix:
     container_name: phoenix
     image: arizephoenix/phoenix:latest
@@ -15,7 +16,8 @@ services:
       retries: 5
       start_period: 20s
       timeout: 10s
-  db:
+
+  phoenix-db:
     image: postgres
     environment:
       - POSTGRES_USER=postgres
@@ -26,8 +28,203 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 30s
       timeout: 60s
       retries: 5
       start_period: 80s
+
+  #opensearch
+  opensearch-node1: # This is also the hostname of the container within the Docker network (i.e. https://opensearch-node1/)
+    image: opensearchproject/opensearch:latest # Specifying the latest available image - modify if you want a specific version
+    container_name: opensearch-node1
+    environment:
+      - cluster.name=opensearch-cluster # Name the cluster
+      - node.name=opensearch-node1 # Name the node that will run in this container
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2 # Nodes to look for when discovering the cluster
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2 # Nodes eligible to serve as cluster manager
+      - bootstrap.memory_lock=true # Disable JVM heap memory swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=jhzkJxhdf123@1
+    ulimits:
+      memlock:
+        soft: -1 # Set memlock to unlimited (no soft or hard limit)
+        hard: -1
+    volumes:
+      - /home/emilmeister/EmilProjects/opensearch/data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+    ports:
+      - 9200:9200 # REST API
+      - 9600:9600 # Performance Analyzer
+    expose:
+      - "9600"
+      - "9200"
+
+  opensearch-node2:
+    image: opensearchproject/opensearch:latest # This should be the same image used for opensearch-node1 to avoid issues
+    container_name: opensearch-node2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=jhzkJxhdf123@1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /home/emilmeister/EmilProjects/opensearch/data2:/usr/share/opensearch/data
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+
+  #milvus
+  etcd:
+    container_name: milvus-etcd
+    image: quay.io/coreos/etcd:v3.5.16
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
+    command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio:
+    container_name: milvus-minio
+    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9001:9001"
+      - "9000:9000"
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/minio:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  milvus-standalone:
+    container_name: milvus-standalone
+    image: milvusdb/milvus:v2.5.4
+    command: ["milvus", "run", "standalone"]
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      start_period: 90s
+      timeout: 20s
+      retries: 3
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      - etcd
+      - minio
+
+  # embedder
+  embedder:
+    build: ./embedder
+    container_name: embedder
+    ports:
+      - 8500:8500
+    command:  uvicorn main:app --host 0.0.0.0 --port 8500
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8500/docs" ]
+      interval: 30s
+      start_period: 30s
+      timeout: 20s
+      retries: 3
+
+  # reranker
+  reranker:
+    build: ./reranker
+    container_name: reranker
+    ports:
+      - 8502:8502
+    command: uvicorn main:app --host 0.0.0.0 --port 8502
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8502/docs"]
+      interval: 30s
+      start_period: 30s
+      timeout: 20s
+      retries: 3
+
+  # segmenter
+  segmenter:
+    build: ./segmenter
+    container_name: segmenter
+    command: python main.py
+
+  # transcriber
+  transcriber:
+    build: ./transcriber
+    container_name: transcriber
+    command: python main.py
+
+  # db_saver
+  db_saver:
+    build: ./db_saver
+    container_name: db_saver
+    ports:
+      - 8501:8501
+    command: python main.py
+    depends_on:
+      - milvus-standalone
+      - opensearch-node1
+      - opensearch-node2
+      - opensearch-dashboards
+      - embedder
+
+  # retriever
+  retriever:
+    build: ./retriever
+    container_name: retriever
+    ports:
+      - 8503:8503
+    command: uvicorn main:app --host 0.0.0.0 --port 8503
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8503/docs"]
+      interval: 30s
+      start_period: 30s
+      timeout: 20s
+      retries: 3
+    depends_on:
+      - reranker
+      - phoenix
+
+  # rag-service
+  rag-service:
+    build: ./rag-service
+    container_name: rag-service
+    ports:
+      - 8510:8510
+    command: streamlit run  main.py --server.port 8510
+    depends_on:
+      - retriever
+      - phoenix
