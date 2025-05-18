@@ -23,3 +23,15 @@
 
 
 https://dev.to/amosgyamfi/how-to-run-openai-agents-sdk-locally-with-100-llms-and-custom-tracing-5gpi
+
+
+удаление коллекции в милвусе
+
+```
+curl --request POST \
+--url "http://192.168.0.100:19530/v2/vectordb/collections/drop" \
+--header "Content-Type: application/json" \
+-d '{
+    "collectionName": "video_confs"
+}'
+```

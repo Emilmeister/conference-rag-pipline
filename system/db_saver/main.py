@@ -94,7 +94,8 @@ for message in consumer:
                     'vector': get_embedding(base_chunk),
                     "room_uuid": room_uuid,
                     "base_chunk": base_chunk,
-                    "parent_chunk": large_chunk['parent_chunk']
+                    "parent_chunk": large_chunk['parent_chunk'],
+                    "meeting_label": large_chunk['meeting_label'],
                 }
                 response = opensearch_client.index(
                     index=OPENSEARCH_INDEX_NAME,

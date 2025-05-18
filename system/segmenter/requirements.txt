@@ -4,3 +4,10 @@ langchain-core
 langchain-community
 langchain-openai
 python-snappy
+pydantic
+openai-agents
+arize-phoenix-otel
+openai
+requests
+openinference-instrumentation-openai
+openinference-instrumentation-openai-agents
