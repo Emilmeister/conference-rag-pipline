@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from fastapi import FastAPI
@@ -5,11 +6,12 @@ from pydantic import BaseModel
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 import torch
 import uvicorn
+import os
 
 app = FastAPI()
 
 cross_encoder = HuggingFaceCrossEncoder(
-    model_name='amberoad/bert-multilingual-passage-reranking-msmarco',
+    model_name=os.getenv('RERANKER_MODEL_NAME'),
     model_kwargs={'device': 'cuda' if torch.cuda.is_available() else 'cpu'}
 )
 

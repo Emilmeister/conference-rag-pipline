@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+RUN apt-get update && apt-get install -y curl
+
 # Expose the port the app runs on
 EXPOSE 8000
 

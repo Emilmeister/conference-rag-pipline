@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN apt-get update && apt-get install -y curl
+
 # Открываем порт, на котором будет работать приложение
 EXPOSE 8502
 

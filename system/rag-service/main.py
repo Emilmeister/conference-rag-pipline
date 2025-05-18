@@ -13,6 +13,7 @@ import os
 import ssl
 import requests
 import numpy as np
+import re
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -39,6 +40,18 @@ tracer_provider = register(
 set_default_openai_client(AsyncOpenAI(base_url=OPENAI_API_URL, api_key=OPENAI_API_KEY, timeout=60 * 5))
 set_default_openai_api('chat_completions')
 openai_provider.DEFAULT_MODEL = DEFAULT_MODEL
+
+
+def remove_think_tags(text: str) -> str:
+    """Удаляет теги <think> и их содержимое из текста.
+
+    Args:
+        text: Исходный текст, который может содержать теги <think>.
+
+    Returns:
+        Текст без тегов <think> и их содержимого.
+    """
+    return re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
 
 
 # Using a separate event loop to run async code in Streamlit
@@ -103,7 +116,7 @@ def run_agent_query(messages):
             trace_id = gen_trace_id()
             with trace(workflow_name="Question Answering", trace_id=trace_id):
                 result = await Runner.run(starting_agent=agent, input=messages)
-                return result.final_output, trace_id
+                return remove_think_tags(result.final_output), trace_id
 
         return AsyncRunner.run_async(run_query)
     except Exception as e:
