@@ -41,5 +41,6 @@ for message in consumer:
     bucket = message.value.get('bucket')
     logging.info('folder, bucket: %s, %s', folder, bucket)
     transcribe_audio_from_s3_folder(bucket, folder)
+    logging.info('processing_end: %s, %s', folder, bucket)
 
 

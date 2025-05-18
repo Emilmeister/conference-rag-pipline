@@ -64,8 +64,8 @@ for message in consumer:
     room_uuid = message.value.get('room_uuid')
     final_transcription = message.value.get('final_transcription')
     logging.info('room_uuid: %s', room_uuid)
-    summary = remove_think_tags(model.invoke("Сгенерируй саммари диалога и ничего больше: \n\n" + final_transcription))
-    large_chunks = large_text_splitter.split_text(final_transcription) + large_text_splitter.split_text(summary.text())
+    summary = model.invoke("Сгенерируй саммари диалога и ничего больше: \n\n" + final_transcription)
+    large_chunks = large_text_splitter.split_text(final_transcription) + large_text_splitter.split_text(remove_think_tags(summary.text()))
     chunks = []
     for large_chunk in large_chunks:
         normal_chunks = normal_text_splitter.split_text(large_chunk)

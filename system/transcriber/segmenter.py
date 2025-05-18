@@ -8,6 +8,12 @@ import uuid
 
 load_dotenv()
 
+# Обработка через Pyannote
+pipeline = Pipeline.from_pretrained(
+    "pyannote/voice-activity-detection",
+    use_auth_token='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'
+)
+
 
 def export_segments(audio, segments, start_timestamp=0, output_dir="output"):
     """Нарезка аудио по временным меткам и сохранение сегментов"""
@@ -53,11 +59,6 @@ def opus_to_segments_pyannote(audio_data, start_timestamp=0):
     temp_wav = f"{uuid.uuid4()}.wav"
     original_audio.export(temp_wav, format="wav")
 
-    # Обработка через Pyannote
-    pipeline = Pipeline.from_pretrained(
-        "pyannote/voice-activity-detection",
-        use_auth_token='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'
-    )
     output = pipeline(temp_wav)
 
     # Удаляем временный файл
