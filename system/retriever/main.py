@@ -1,3 +1,4 @@
+import json
 import uuid
 from typing import List
 
@@ -74,6 +75,7 @@ class RetrieveRequest(BaseModel):
     classic_search_num: int
     vector_search_num: int
     max_get_num: int
+    room_uuid: str
 
 
 class HypotheticalDocument(BaseModel):
@@ -122,13 +124,14 @@ def get_embedding(text: str) -> List[int]:
         'embedding')
 
 
-def similar_docs_milvus(query, n=5):
+def similar_docs_milvus(query, room_uuid, n=5):
     vector = get_embedding(query)
 
     results = milvus_client.search(
         collection_name=MILVUS_COLLECTION_NAME,
         data=[vector],
         limit=n,
+        filter=f'room_uuid like "{room_uuid}"' if len(room_uuid) != 0 else None,
         output_fields=['parent_id', 'room_uuid', 'base_chunk', 'parent_chunk']
     )
     answer = []
@@ -146,7 +149,8 @@ def similar_docs_milvus(query, n=5):
     return answer
 
 
-def similar_docs_opensearch(query, n=5):
+def similar_docs_opensearch(query, room_uuid, n=5):
+    # Базовый запрос
     body = {
         'size': n,
         'query': {
@@ -156,6 +160,17 @@ def similar_docs_opensearch(query, n=5):
             }
         }
     }
+
+    # Добавляем фильтр по room_uuid, если он указан
+    if len(room_uuid) != 0:
+        original_query = body['query']
+        body['query'] = {
+            'bool': {
+                'must': [original_query],  # Оригинальный multi_match запрос
+                'filter': [{'term': {'room_uuid': room_uuid}}]  # Фильтр по UUID
+            }
+        }
+
     answer = []
     results = opensearch_client.search(
         body=body,
@@ -167,7 +182,7 @@ def similar_docs_opensearch(query, n=5):
         source = result['_source']
         d['parent_id'] = source['parent_id']
         d['room_uuid'] = source['room_uuid']
-        d['meeting_label'] = source['meeting_label'] if 'meeting_label' in source else 'Название не задано'
+        d['meeting_label'] = source.get('meeting_label', 'Название не задано')
         d['base_chunk'] = source['base_chunk']
         d['parent_chunk'] = source['parent_chunk']
         d['text'] = source['base_chunk']
@@ -187,12 +202,13 @@ def get_reranked_docs(query: str, texts: List[dict]):
 @app.post("/retrieve")
 async def retrieve(request: RetrieveRequest):
     with trace(workflow_name="video-conference-retriever", group_id=str(uuid.uuid4())):
+        logging.info(f"input: {json.dumps(request.model_dump(mode='json'))}")
         multiple_queries = await get_multiple_queries(request.query)
         hypo_docs = [await get_hypo_documents(x) for x in multiple_queries]
         docs = []
         for hypo_doc in hypo_docs:
-            docs.extend(similar_docs_milvus(hypo_doc, n=request.vector_search_num))
-            docs.extend(similar_docs_opensearch(hypo_doc, n=request.classic_search_num))
+            docs.extend(similar_docs_milvus(hypo_doc, request.room_uuid, request.vector_search_num))
+            docs.extend(similar_docs_opensearch(hypo_doc, request.room_uuid, request.classic_search_num))
 
         docs = list({x['id']: x for x in docs}.values())
         reranked_docs = get_reranked_docs(request.query, docs)
