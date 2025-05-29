@@ -3,10 +3,13 @@ from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 import torch
 import uvicorn
+import os
 
 app = FastAPI()
 
-model = SentenceTransformer('sentence-transformers/sentence-t5-xl')
+EMB_MODEL = os.getenv("EMB_MODEL", 'sentence-transformers/sentence-t5-xl')
+
+model = SentenceTransformer(EMB_MODEL)
 
 
 class TextRequest(BaseModel):

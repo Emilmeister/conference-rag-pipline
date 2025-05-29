@@ -24,7 +24,8 @@ consumer = KafkaConsumer(
     TRANSCRIPTION_INPUT_TOPIC,
     group_id=TRANSCRIBER_KAFKA_GROUP_ID,
     bootstrap_servers=[KAFKA_BOOTSTRAP_SERVERS],
-    value_deserializer=lambda x: json.loads(x.decode('utf-8'))
+    value_deserializer=lambda x: json.loads(x.decode('utf-8')),
+    session_timeout_ms=30*60*1000
 )
 
 logging.info('Partitions of the topic: %s', consumer.partitions_for_topic(TRANSCRIPTION_INPUT_TOPIC))

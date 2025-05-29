@@ -59,7 +59,7 @@ def transcribe_audio_batch(list_of_audio_files: list):
     return [prediction["chunks"] for prediction in predictions]
 
 
-def transcribe_audio_from_s3(room_uuid: str, bucket: str, key: str, username: str, start_timestamp=0):
+def transcribe_audio_from_s3(bucket: str, key: str, start_timestamp=0):
     try:
         response = s3.get_object(Bucket=bucket, Key=key)
         audio_data = response['Body'].read()
@@ -93,7 +93,7 @@ def transcribe_audio_from_s3_folder(bucket: str, folder: str):
             if match:
                 uuid, username, timestamp = match.groups()
                 timestamp = int(timestamp)
-                transcriptions = transcribe_audio_from_s3(uuid, bucket, file, username, start_timestamp=timestamp)
+                transcriptions = transcribe_audio_from_s3(bucket, file, start_timestamp=timestamp)
                 for transcription in transcriptions:
                     print('transcription!', transcription)
                     for chunk in transcription[0]:

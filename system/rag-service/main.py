@@ -200,11 +200,10 @@ def main():
                 st.session_state.context['meeting_label'] = room['meeting_label']
                 st.session_state.context['selected_room_uuid_history_idx'] = len(st.session_state.history)
 
-                # Удаляем результат вызова функции
                 st.session_state.history[-1]['output'] = rag_search_inner(RunContextWrapper(context=st.session_state.context), json.loads(st.session_state.history[-2]['arguments'])['query'])
-                logging.info(st.session_state.history[-1]['output'])
 
                 result, trace_id = run_agent_query(st.session_state.history, st.session_state.context)
+                logging.info(f"result {result.to_input_list()}")
                 st.session_state.history = result.to_input_list()
 
                 if trace_id:

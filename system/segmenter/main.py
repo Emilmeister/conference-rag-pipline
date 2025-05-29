@@ -86,14 +86,6 @@ logging.info('Partitions of the topic: %s', consumer.partitions_for_topic(SEGMEN
 
 
 def remove_think_tags(text: str) -> str:
-    """Удаляет теги <think> и их содержимое из текста.
-
-    Args:
-        text: Исходный текст, который может содержать теги <think>.
-
-    Returns:
-        Текст без тегов <think> и их содержимого.
-    """
     return re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
 
 
@@ -105,10 +97,15 @@ for message in consumer:
     logging.info('room_uuid: %s', room_uuid)
     trace_id = gen_trace_id()
     with trace(workflow_name="Question Answering", trace_id=trace_id):
-        result = Runner.run_sync(starting_agent=agent, input=[EasyInputMessageParam(role='user', content=final_transcription)])
+        result = Runner.run_sync(
+            starting_agent=agent,
+            input=[EasyInputMessageParam(role='user', content=final_transcription)]
+        )
+
     summary_result = SummarizerOutput.model_validate(result.final_output)
 
-    large_chunks = large_text_splitter.split_text(final_transcription) + large_text_splitter.split_text(remove_think_tags(summary_result.summary))
+    large_chunks = (large_text_splitter.split_text(final_transcription)
+                    + large_text_splitter.split_text(remove_think_tags(summary_result.summary)))
     chunks = []
     for large_chunk in large_chunks:
         normal_chunks = normal_text_splitter.split_text(large_chunk)
